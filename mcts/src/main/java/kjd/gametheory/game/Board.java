@@ -1,7 +1,10 @@
 package kjd.gametheory.game;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import kjd.gametheory.util.ObjectCopier;
 import lombok.Getter;
 
 /**
@@ -25,6 +28,24 @@ public abstract class Board<P extends Position<T,S>,
 	 */
 	@Getter
 	private List<P> positions;
+	
+	/**
+	 * Creates a new Board.
+	 */
+	public Board() {
+		positions = new ArrayList<>();
+	}
+	
+	/**
+	 * Creates a new Board, which is a copy of the board supplied. 
+	 * 
+	 * @param board
+	 */
+	public Board(Board<P,T,S> board) {
+		positions = board.getPositions().stream()
+			.map(p -> ObjectCopier.copyOf(p))
+			.collect(Collectors.toList());
+	}
 	
 	/**
 	 * Returns all the currently open positions on the {@link Board}.
