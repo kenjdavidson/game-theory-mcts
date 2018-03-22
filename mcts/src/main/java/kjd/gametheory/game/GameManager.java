@@ -1,7 +1,8 @@
 package kjd.gametheory.game;
 
 import java.util.List;
-import java.util.Optional;
+
+import org.apache.commons.lang3.Validate;
 
 import kjd.gametheory.util.ObjectCopier;
 import lombok.AccessLevel;
@@ -19,17 +20,17 @@ import lombok.Setter;
  * @param <T>	Token type assignable to the Position
  * @param <S>	Player type assignable to the Token
  */
-public abstract class Game<B extends Board<P,T,U>,
+public abstract class GameManager<G extends GameManager<G,B,P,T,U>,
+							B extends GameBoard<P,T,U>,
 							P extends Position<T,U>,
 							T extends PlayerToken<U,T>,
 							U extends Player<T,U>> {
-
+	
 	/**
 	 * @param the Board being played upon
 	 * @return the Board being played upon
 	 */
-	@Getter
-	@Setter
+	@Getter(value=AccessLevel.PROTECTED)
 	private B board;
 	
 	/**
@@ -63,6 +64,10 @@ public abstract class Game<B extends Board<P,T,U>,
 	@Setter(value=AccessLevel.PRIVATE)
 	private boolean started;
 	
+	@Getter
+	@Setter(value=AccessLevel.PRIVATE)
+	private boolean cancelled;
+	
 	/**
 	 * Current turn.
 	 */
@@ -76,7 +81,7 @@ public abstract class Game<B extends Board<P,T,U>,
 	 * @param board
 	 * @param players
 	 */
-	public Game(B board, List<U> players) {
+	public GameManager(B board, List<U> players) {
 		this.board = board;
 		this.players = players;
 	}
@@ -87,10 +92,11 @@ public abstract class Game<B extends Board<P,T,U>,
 	 * 
 	 * @param game
 	 */
-	public Game(Game<B,P,T,U> game, boolean next) {
+	public GameManager(GameManager<G,B,P,T,U> game, boolean next) {
 		this(ObjectCopier.copyOf(game.getBoard()), game.getPlayers());
-		if (next) 
+		if (next) {
 			nextPlayer();
+		}
 	}
 	
 	/**
@@ -98,30 +104,35 @@ public abstract class Game<B extends Board<P,T,U>,
 	 * the first player.
 	 * 
 	 * @return
+	 * @throws IllegalStateException
 	 */
-	public void start() {
-		if (isStarted())
-			throw new IllegalStateException("Game has already been started");
+	public void startGame() throws IllegalStateException{		
+		Validate.validState(!isStarted());
+		
 		previousPlayerIndex = -1;
 		playerIndex = 0;
 		started = true;
+		cancelled = false;
 	}
 	
 	/**
-	 * Ends the current game.
+	 * Ends the current game, setting the status to cancelled.
 	 */
-	public void end() {
-		if (!isStarted()) 
-			throw new IllegalStateException("Game is not currently in progress");
+	public void endGame() throws IllegalStateException {
+		Validate.validState(isStarted());
+		
 		started = false;
+		cancelled = true;
+		nextPlayer();
 	}
 	
 	/**
-	 * Returns the current player.
+	 * Returns the current player.  If there is no current player
 	 * 
 	 * @return
 	 */
-	public U getCurrentPlayer() {
+	public U getCurrentPlayer() throws IllegalStateException {	
+		Validate.validState(isStarted() && !isCancelled());
 		return players.get(getPlayerIndex());
 	}
 	
@@ -134,7 +145,7 @@ public abstract class Game<B extends Board<P,T,U>,
 	 */
 	public U nextPlayer() {
 		setPreviousPlayerIndex(getPlayerIndex());
-		setPlayerIndex(players.size() % getPlayerIndex());
+		setPlayerIndex(players.size() / (getPlayerIndex() + 1) - 1);
 		return players.get(getPlayerIndex());
 	}
 	
@@ -150,12 +161,20 @@ public abstract class Game<B extends Board<P,T,U>,
 	}
 	
 	/**
-	 * Returns a winning player if the game is over. If the game is not over, then a null
-	 * is returned.
+	 * Provides access to the open positions on the board.
 	 * 
 	 * @return
 	 */
-	public abstract boolean isGameOver();
+	public List<P> getOpenPositions() {
+		return getBoard().getOpenPositions();
+	}
+	
+	/**
+	 * Returns the GameStatus
+	 * 
+	 * @return
+	 */
+	public abstract GameStatus getGameStatus();
 	
 	/**
 	 * Game should be aware of all it's possible plays at a particular state.  This can be
@@ -165,7 +184,7 @@ public abstract class Game<B extends Board<P,T,U>,
 	 * 
 	 * @return
 	 */
-	public abstract List<P> getAllPossibleMoves();
+	public abstract List<G> getAllPossibleMoves();
 	
 	/**
 	 * Performs a specified move by the requested player.  Perform move should handle 
@@ -179,9 +198,12 @@ public abstract class Game<B extends Board<P,T,U>,
 	 * Returns whether the move was successful.  Some games may be able to block a move
 	 * due to other Player moves.
 	 * 
+	 * @param currentPlayer
+	 * @param position
 	 * @return 
 	 * @throws IllegalArgumentExcpetion if the player or position provided is not valid
 	 */
-	public abstract boolean performMove(U currentPlayer, P position) throws IllegalArgumentException;
+	public abstract GameStatus performMove(U currentPlayer, P position) 
+			throws IllegalArgumentException, IllegalStateException;
 	
 }

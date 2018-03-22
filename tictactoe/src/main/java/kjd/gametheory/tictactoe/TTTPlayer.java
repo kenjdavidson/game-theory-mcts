@@ -10,6 +10,10 @@ import kjd.gametheory.game.Player;
  */
 public class TTTPlayer extends Player<TTTMark, TTTPlayer> {
 
+	public TTTPlayer(int id, String name, TTTMark token) {
+		super(id, name, token);
+	}
+
 	public TTTPlayer(int id, String name) {
 		super(id, name);
 	}
@@ -17,5 +21,5 @@ public class TTTPlayer extends Player<TTTMark, TTTPlayer> {
 	public TTTPlayer(Player<TTTMark, TTTPlayer> player) {
 		super(player);
 	}
-
+	
 }

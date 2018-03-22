@@ -4,7 +4,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 
-import kjd.gametheory.game.Game;
+import kjd.gametheory.game.GameManager;
+import kjd.gametheory.game.GameStatus;
 import kjd.gametheory.game.Player;
 import kjd.gametheory.game.Position;
 import kjd.gametheory.util.ObjectCopier;
@@ -24,7 +25,7 @@ import lombok.Getter;
  * @param <G> Should implement a Game of a particular type.
  */
 @SuppressWarnings(value="rawtypes")
-public class MonteCarloSearch<G extends Game> {
+public class MonteCarloSearch<G extends GameManager> {
 	
 	/**
 	 * Default win score, 10.
@@ -101,7 +102,7 @@ public class MonteCarloSearch<G extends Game> {
 			
 			// Step 2 - Expansion of the promising node as long as we're still 
 			// playing.
-			if (!promisingNode.getGame().isGameOver()) {
+			if (promisingNode.getGame().getGameStatus() == GameStatus.IN_PROGRESS) {
 				promisingNode.expand();
 			}
 			
@@ -133,13 +134,13 @@ public class MonteCarloSearch<G extends Game> {
 	private int simulatePlayout(Node<G> toExplore) {
 		Node<G> tempNode = ObjectCopier.copyOf(toExplore);
 		
-		if (tempNode.getGame().isGameOver() 
+		if (tempNode.getGame().getGameStatus() == GameStatus.IN_PROGRESS 
 				&& !currentPlayer.equals(tempNode.getGame().getCurrentPlayer())) {
 			tempNode.setWon(Integer.MIN_VALUE);
 			return 0;
 		} 
 		
-		while (!tempNode.getGame().isGameOver()) {			
+		while (tempNode.getGame().getGameStatus() != GameStatus.IN_PROGRESS) {			
 			simulateRandomPlay(tempNode.getGame());
 		}
 		
@@ -155,7 +156,7 @@ public class MonteCarloSearch<G extends Game> {
 	 */
 	@SuppressWarnings("unchecked")
 	private void simulateRandomPlay(G game) {
-		List<Position> open = game.getAllPossibleMoves();
+		List<Position> open = game.getOpenPositions();
 		int next = (int) (Math.random() * (open.size()-1)) + 1;
 		game.performMove(game.getCurrentPlayer(), open.get(next));
 	}

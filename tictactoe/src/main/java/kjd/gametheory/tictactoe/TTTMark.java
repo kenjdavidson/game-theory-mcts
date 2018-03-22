@@ -22,4 +22,7 @@ public class TTTMark extends PlayerToken<TTTPlayer, TTTMark> {
 		super(name, type);
 	}
 
+	public TTTMark(String name) {
+		super(name, name);
+	}
 }

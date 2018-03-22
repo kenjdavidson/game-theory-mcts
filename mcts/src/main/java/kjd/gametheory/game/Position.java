@@ -7,7 +7,7 @@ import lombok.Setter;
 /**
  * Provides details regarding positions on a Game board.  In most cases positions will be
  * denoted by X,Y values so that they can be placed on a physical board.  Although it's 
- * more than possible that a {@link Game} {@link Board} is a different shape (hexagon, 
+ * more than possible that a {@link GameManager} {@link GameBoard} is a different shape (hexagon, 
  * triangle, etc) and the position will need to manage those locations correctly.
  * 
  * @author kendavidson
@@ -47,9 +47,20 @@ public abstract class Position<T extends PlayerToken<P,T>,
 	 * @param y
 	 */
 	public Position(int x, int y) {
-		this.x = x;
-		this.y = y;
+		this(x,y,null);
 	}
+	
+	/**
+	 * Creates a new Position with a Token.
+	 * @param x
+	 * @param y
+	 * @param token
+	 */
+	public Position(int x, int y, T token) {
+		this.setX(x);
+		this.setY(y);
+		this.setToken(token);
+	}	
 	
 	/**
 	 * Crates a new Position which is a copy of the one provided.  
@@ -60,5 +71,14 @@ public abstract class Position<T extends PlayerToken<P,T>,
 		this(position.getX(), position.getY());				
 		this.setToken(ObjectCopier.copyOf(position.getToken()));		
 	}
-		
+	
+	@Override
+	public String toString() {
+		return new StringBuffer()
+				.append(this.getClass().getSimpleName())
+				.append(" [").append(this.getX())
+				.append(",").append(this.getY())
+				.append("]").toString();
+				
+	}
 }

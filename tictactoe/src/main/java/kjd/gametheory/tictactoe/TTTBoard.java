@@ -1,14 +1,12 @@
 package kjd.gametheory.tictactoe;
 
 import java.util.List;
-import java.util.stream.Stream;
-
-import org.apache.commons.lang3.Validate;
-
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import kjd.gametheory.game.Board;
+import org.apache.commons.lang3.Validate;
+
+import kjd.gametheory.game.GameBoard;
 
 /**
  * Tic tac toe board contains nine squares laid out in a 3 x 3 block.  Rules of the 
@@ -31,12 +29,12 @@ import kjd.gametheory.game.Board;
  * @author kendavidson
  *
  */
-public class TTTBoard extends Board<TTTSquare, TTTMark, TTTPlayer> {
+public class TTTBoard extends GameBoard<TTTSquare, TTTMark, TTTPlayer> {
 
 	/**
 	 * Tic Tac Toe board has 9 total positions
 	 */
-	public static final int NUM_POSITIONS = 9;
+	public static final int SQUARES = 9;
 	
 	/**
 	 * There are 3 rows
@@ -56,8 +54,8 @@ public class TTTBoard extends Board<TTTSquare, TTTMark, TTTPlayer> {
 		
 		// X = ceil(i / 3) (1, 1, 1, ...)
 		// Y = i mod 3 (1, 2, 3, ...)
-		IntStream.range(0,NUM_POSITIONS)
-			.mapToObj(i -> new TTTSquare((int) Math.ceil((i+1) / ROWS), (i % COLS) + 1))
+		IntStream.range(0,SQUARES)
+			.mapToObj(i -> new TTTSquare(getXPosition(i), getYPosition(i)))
 			.forEach(p -> getPositions().add(p));
 	}
 	
@@ -65,15 +63,16 @@ public class TTTBoard extends Board<TTTSquare, TTTMark, TTTPlayer> {
 	public List<TTTSquare> getOpenPositions() {
 		return getPositions().stream()
 			.filter(p -> p.getToken() == null)
+			.map(p -> new TTTSquare(p))
 			.collect(Collectors.toList());
 	}
 
 	@Override
-	public boolean isOpen(TTTSquare position) {
+	public boolean isOpen(TTTSquare position) throws IllegalArgumentException {
 		Validate.inclusiveBetween(1, ROWS, position.getX());
 		Validate.inclusiveBetween(1, COLS, position.getY());
 		
-		int index = (COLS * (position.getX()-1) % ROWS) + (position.getY() - 1);		
+		int index = getPositionIndex(position);				
 		TTTSquare found = getPositions().get(index);
 		return found.getToken() == null;
 	}
@@ -86,8 +85,57 @@ public class TTTBoard extends Board<TTTSquare, TTTMark, TTTPlayer> {
 	}
 
 	@Override
-	public boolean isOccupied(TTTSquare position) {
+	public boolean isOccupied(TTTSquare position) throws IllegalArgumentException {
 		return !isOpen(position);
 	}
 
+	@Override
+	public TTTSquare getPosition(TTTSquare position) throws IllegalArgumentException {
+		int index = getPositionIndex(position);
+		Validate.inclusiveBetween(0, SQUARES-1, index);
+		return getPositions().get(index);
+	}
+	
+	/**
+	 * Performs a lookup of the position index from the provided Position 
+	 * locations.  Performs validation of the Index after lookup.
+	 * 
+	 * @param position
+	 * @return
+	 */
+	private int getPositionIndex(TTTSquare position) throws IllegalArgumentException {
+		return getPositionIndex(position.getX(), position.getY());		
+	}
+
+	/**
+	 * Performs a lookup of the position index from the provided Position 
+	 * locations.  Performs validation of the Index after lookup.
+	 * 
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	private int getPositionIndex(int x, int y) throws IllegalArgumentException {
+		return ((x - 1) * ROWS) + ((y - 1) % COLS); 
+	}
+	
+	/**
+	 * Calculates the X Board position given the List index.
+	 * 
+	 * @param index
+	 * @return
+	 */
+	private int getXPosition(int index) {
+		return (index / ROWS) + 1 ;
+	}
+	
+	/**
+	 * Calculates the Y Board position given the List index.
+	 * 
+	 * @param index
+	 * @return
+	 */
+	private int getYPosition(int index) {
+		return (index % COLS) + 1;
+	}	
 }

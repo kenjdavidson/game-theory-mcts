@@ -5,9 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * {@link PlayerToken}s are owned by {@link Player}s and can be placed upon a {@link Board}
+ * {@link PlayerToken}s are owned by {@link Player}s and can be placed upon a {@link GameBoard}
  * by setting it to a position.  The {@link PlayerToken} provides some standard fields
- * that may be applied to all types of {@link Game} Objects.
+ * that may be applied to all types of {@link GameManager} Objects.
  * <p>
  * 
  * @author kendavidson
@@ -67,4 +67,47 @@ public abstract class PlayerToken<P extends Player<T,P>,
 		this.player = ObjectCopier.copyOf(token.getPlayer());
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((player == null) ? 0 : player.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		return result;
+	}
+
+	/**
+	 * Equals based on the Name, Player and Type.  Name and Type are Strings and
+	 * can be based on the normal equals, Player can as well, since there should only
+	 * be a single reference to Players.
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		T other = (T) obj;
+		if (name == null) {
+			if (other.getName() != null)
+				return false;
+		} else if (!name.equals(other.getName()))
+			return false;
+		if (player == null) {
+			if (other.getPlayer() != null)
+				return false;
+		} else if (!player.equals(other.getPlayer()))
+			return false;
+		if (type == null) {
+			if (other.getType() != null)
+				return false;
+		} else if (!type.equals(other.getType()))
+			return false;
+		return true;
+	}
+	
 }

@@ -3,10 +3,12 @@ package kjd.gametheory.mcts;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Random;
 
-import kjd.gametheory.game.Board;
-import kjd.gametheory.game.Game;
+import kjd.gametheory.game.GameBoard;
+import kjd.gametheory.game.GameManager;
+import kjd.gametheory.game.Position;
 import kjd.gametheory.util.ObjectCopier;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,13 +16,13 @@ import lombok.Setter;
 /**
  * Implements a {@link Node} on the Monte Carlo Tree.  {@link Node}s contain 
  * links to their parent {@link Node}, a list of their child {@link Node} and
- * information regarding the Game {@link Board} and {@link Playout}. 
+ * information regarding the Game {@link GameBoard} and {@link Playout}. 
  * 
  * @author kendavidson
  *
  */
 @SuppressWarnings("rawtypes")
-public class Node<G extends Game> {
+public class Node<G extends GameManager> {
 
 	/**
 	 * @param the number of times this Node has been played

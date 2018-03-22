@@ -8,7 +8,7 @@ import kjd.gametheory.util.ObjectCopier;
 import lombok.Getter;
 
 /**
- * Abstract {@link Board} provides physical characteristics about a particular
+ * Abstract {@link GameBoard} provides physical characteristics about a particular
  * game board.  A Board consists of a list of Positions, it's up to the 
  * implementation to determine how these Positions are laid out or how 
  * movement is allowed along them.
@@ -19,7 +19,7 @@ import lombok.Getter;
  * @param <T> Token type assignable to the Position
  * @param <S> Player type assignable to the Token and Position
  */
-public abstract class Board<P extends Position<T,S>,
+public abstract class GameBoard<P extends Position<T,S>,
 							T extends PlayerToken<S,T>,
 							S extends Player<T,S>> {
 	
@@ -32,7 +32,7 @@ public abstract class Board<P extends Position<T,S>,
 	/**
 	 * Creates a new Board.
 	 */
-	public Board() {
+	public GameBoard() {
 		positions = new ArrayList<>();
 	}
 	
@@ -41,14 +41,17 @@ public abstract class Board<P extends Position<T,S>,
 	 * 
 	 * @param board
 	 */
-	public Board(Board<P,T,S> board) {
+	public GameBoard(GameBoard<P,T,S> board) {
 		positions = board.getPositions().stream()
 			.map(p -> ObjectCopier.copyOf(p))
 			.collect(Collectors.toList());
 	}
 	
 	/**
-	 * Returns all the currently open positions on the {@link Board}.
+	 * Returns all the currently open positions on the {@link GameBoard}.  The positions
+	 * should be returned as copies of the original, as they may have operations
+	 * performed against them; we don't want the originals tainted.
+	 * 
 	 * @return
 	 */
 	public abstract List<P> getOpenPositions();
@@ -59,10 +62,12 @@ public abstract class Board<P extends Position<T,S>,
 	 * @param position
 	 * @return
 	 */
-	public abstract boolean isOpen(P position);
+	public abstract boolean isOpen(P position) throws IllegalArgumentException;
 	
 	/**
-	 * Returns all the currently occupied positions on the {@link Board}.
+	 * Returns all the currently occupied positions on the {@link GameBoard}.  Occupied 
+	 * positions should return the actual Board positions, since if anything happens
+	 * we want to use the currently occupied position.
 	 * 
 	 * @return
 	 */
@@ -74,6 +79,15 @@ public abstract class Board<P extends Position<T,S>,
 	 * @param position
 	 * @return
 	 */
-	public abstract boolean isOccupied(P position);
+	public abstract boolean isOccupied(P position) throws IllegalArgumentException;
+	
+	/**
+	 * Attempts to get the requested position from the Board.  Get position will
+	 * return the actual position; when using it, ensure that you copy
+	 * if making changes that will not be saved to the live game.
+	 * 
+	 * @return
+	 */
+	public abstract P getPosition(P position) throws IllegalArgumentException;
 	
 }

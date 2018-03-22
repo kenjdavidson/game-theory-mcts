@@ -2,6 +2,7 @@ package kjd.gametheory.game;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import kjd.gametheory.util.ObjectCopier;
@@ -9,8 +10,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Represents a {@link Game} {@code Player}.  In almost all games {@code Player}s
- * control any number of Tokens, which are used to play the {@link Game}.
+ * Represents a {@link GameManager} {@code Player}.  In almost all games {@code Player}s
+ * control any number of Tokens, which are used to play the {@link GameManager}.
  * 
  * @author kendavidson
  * 
@@ -42,7 +43,7 @@ public abstract class Player<T extends PlayerToken<P,T>,
 	 * adding or removing tokens from the player.
 	 */
 	@Getter
-	private Collection<T> tokens;
+	private List<T> tokens;
 	
 	/**
 	 * Creates a new Player, which is a copy of the one supplied.
@@ -57,15 +58,39 @@ public abstract class Player<T extends PlayerToken<P,T>,
 	}
 	
 	/**
-	 * Creates a Player with a specific Id and Name.
+	 * Creates a Player with a specific Id and name.
 	 * 
 	 * @param id
 	 * @param name
 	 */
 	public Player(int id, String name) {
+		this(id, name, null);
+	}
+	
+	/**
+	 * Creates a Player with an Id, name and starting Token.
+	 * @param id
+	 * @param name
+	 * @param token
+	 */
+	public Player(int id, String name, T token) {
 		this.setId(id);
 		this.setName(name);
 		this.tokens = new ArrayList<>();
+		
+		if (token != null) {
+			tokens.add(token);
+		}
 	}
-			
+		
+	/**
+	 * Adds a token to the Players Token list.  Convenience method to 
+	 * {@link #getTokens()} in order to add.
+	 *  
+	 * @param token
+	 * @return
+	 */
+	public boolean addToken(T token) {
+		return tokens.add(token);		
+	}
 }
