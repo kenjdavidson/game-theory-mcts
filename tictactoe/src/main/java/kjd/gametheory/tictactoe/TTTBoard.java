@@ -59,6 +59,14 @@ public class TTTBoard extends GameBoard<TTTSquare, TTTMark, TTTPlayer> {
 			.forEach(p -> getPositions().add(p));
 	}
 	
+	/**
+	 * Creates a new TTTBoard, which is a copy of the one provided.
+	 * @param board
+	 */
+	public TTTBoard(TTTBoard board) {
+		super(board);
+	}
+	
 	@Override
 	public List<TTTSquare> getOpenPositions() {
 		return getPositions().stream()

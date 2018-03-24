@@ -36,6 +36,10 @@ public class TTTGame extends GameManager<TTTGame, TTTBoard, TTTSquare, TTTMark, 
 	public TTTGame(List<TTTPlayer> players) {
 		this(new TTTBoard(), players);
 	}
+	
+	public TTTGame(TTTGame game) {
+		this(game, false);
+	}
 
 	public TTTGame(TTTGame game, boolean next) {
 		super(game, next);
@@ -81,7 +85,8 @@ public class TTTGame extends GameManager<TTTGame, TTTBoard, TTTSquare, TTTMark, 
 			throws IllegalArgumentException, IllegalStateException {
 		TTTSquare found = getBoard().getPosition(position);
 		
-		Validate.validState(isStarted() && !isCancelled());
+		Validate.validState(isStarted());
+		Validate.validState(!isCancelled());
 		Validate.isTrue(player != null && player.getId() == getCurrentPlayer().getId());
 		Validate.isTrue(found.getToken() != null);
 		found.setToken(position.getToken());

@@ -94,6 +94,12 @@ public abstract class GameManager<G extends GameManager<G,B,P,T,U>,
 	 */
 	public GameManager(GameManager<G,B,P,T,U> game, boolean next) {
 		this(ObjectCopier.copyOf(game.getBoard()), game.getPlayers());
+		this.setStarted(game.isStarted());
+		this.setCancelled(game.isCancelled());
+		this.setPlayerIndex(game.getPlayerIndex());
+		this.setPreviousPlayerIndex(game.getPreviousPlayerIndex());
+		this.setTurn(game.getTurn());
+		
 		if (next) {
 			nextPlayer();
 		}
@@ -132,7 +138,8 @@ public abstract class GameManager<G extends GameManager<G,B,P,T,U>,
 	 * @return
 	 */
 	public U getCurrentPlayer() throws IllegalStateException {	
-		Validate.validState(isStarted() && !isCancelled());
+		Validate.validState(isStarted());
+		Validate.validState(!isCancelled());
 		return players.get(getPlayerIndex());
 	}
 	
