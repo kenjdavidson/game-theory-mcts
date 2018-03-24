@@ -10,7 +10,7 @@ import kjd.gametheory.game.PlayerToken;
  */
 public class TTTMark extends PlayerToken<TTTPlayer, TTTMark> {
 
-	public TTTMark(PlayerToken<TTTPlayer, TTTMark> token) {
+	public TTTMark(TTTMark token) {
 		super(token);
 	}
 

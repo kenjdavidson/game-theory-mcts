@@ -49,7 +49,7 @@ public class TTTGameTest {
 	}
 	
 	@Test(expected=IllegalStateException.class)
-	public void currentPlayerAfterCancel_throwsException() {
+	public void currentPlayerAfterCancel_illegalState() {
 		TTTGame g = createGame(new TTTBoard());
 		g.startGame();
 		g.endGame();
@@ -58,7 +58,7 @@ public class TTTGameTest {
 	}	
 	
 	@Test(expected=IllegalStateException.class)
-	public void moveAfterGameCancelled_throwsException() {
+	public void performMoveAfterCancel_illegalState() {
 		TTTGame g = createGame(new TTTBoard());
 		g.startGame();
 		g.endGame();
@@ -69,4 +69,13 @@ public class TTTGameTest {
 		fail("IllegalStateException not thrown");		
 	}
 	
+	@Test(expected=IllegalStateException.class)
+	public void performMoveBeforeStart_illegalState() {
+		TTTGame g = createGame(new TTTBoard());
+		
+		TTTPlayer p1 = g.getCurrentPlayer();
+		TTTSquare s1 = new TTTSquare(1,1, p1.getTokens().get(0));
+		g.performMove(p1, s1);
+		fail("IllegalStateException not thrown");
+	}
 }

@@ -18,7 +18,7 @@ public class TTTSquare extends Position<TTTMark, TTTPlayer> {
 		super(x, y, token);
 	}
 	
-	public TTTSquare(Position<TTTMark, TTTPlayer> position) {
+	public TTTSquare(TTTSquare position) {
 		super(position);
 	}
 	
