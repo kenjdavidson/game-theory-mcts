@@ -146,4 +146,18 @@ public class TTTBoard extends GameBoard<TTTSquare, TTTMark, TTTPlayer> {
 	private int getYPosition(int index) {
 		return (index % COLS) + 1;
 	}	
+	
+	@Override
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < ROWS; i++) {
+			for (int j = 0; j < COLS; j++) {
+				sb.append("[ ")
+					.append(getPositions().get(getPositionIndex(i, j)))
+					.append(" ]");
+			}
+			sb.append("\n");
+		}
+		return sb.toString();
+	}
 }

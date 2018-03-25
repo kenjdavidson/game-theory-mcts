@@ -18,8 +18,8 @@ import kjd.gametheory.game.GameStatus;
 public class TTTGameTest {
 
 	public TTTGame createGame(TTTBoard board) {		
-		TTTPlayer p1 = new TTTPlayer(1, "Player1", new TTTMark("X")); 		
-		TTTPlayer p2 = new TTTPlayer(2, "Player2", new TTTMark("O"));
+		TTTPlayer p1 = new TTTPlayer(1, "Player1"); 		
+		TTTPlayer p2 = new TTTPlayer(2, "Player2");
 		
 		List<TTTPlayer> players = new ArrayList<>(2);
 		players.add(p1);
@@ -69,10 +69,11 @@ public class TTTGameTest {
 		TTTGame g = new TTTGame(players);
 		g.startGame();
 		
-		TTTGame copy = new TTTGame(g, true);
+		TTTGame copy = new TTTGame(g);
+
 		assertNotSame(g, copy);
 		assertSame(g.getOpenPositions().size(), copy.getOpenPositions().size());
-		assertSame(2, copy.getCurrentPlayer().getId());
+		assertSame(1, copy.getCurrentPlayer().getId());
 	}	
 	
 	@Test
@@ -110,8 +111,8 @@ public class TTTGameTest {
 	public void performMoveBeforeStart_illegalState() {
 		TTTGame g = createGame(new TTTBoard());
 		
-		TTTPlayer p1 = new TTTPlayer(1, "Player1", new TTTMark("X"));
-		TTTSquare s1 = new TTTSquare(1,1, p1.getTokens().get(0));
+		TTTPlayer p1 = new TTTPlayer(1, "Player1");
+		TTTSquare s1 = new TTTSquare(1,1);
 		g.performMove(p1, s1);
 		fail("IllegalStateException not thrown");
 	}
@@ -127,5 +128,75 @@ public class TTTGameTest {
 		g.performMove(p1, s1);
 		fail("IllegalStateException not thrown");		
 	}
+	
+	@Test(expected=IllegalArgumentException.class) 
+	public void performMoveWrongPlayer_illegalState() {
+		TTTGame g = createGame(new TTTBoard());
+		g.startGame();		
+		
+		TTTPlayer p2 = g.getPlayers().get(1);
+		TTTSquare s1 = new TTTSquare(1,1);
+		
+		g.performMove(p2, s1);
+	}
 
+	@Test
+	public void completeGameWinner_gameOver() {
+		List<TTTPlayer> players = new ArrayList<>();
+		players.add(new TTTPlayer(1, "Player1"));
+		players.add(new TTTPlayer(2, "Player2"));
+		TTTGame g = new TTTGame(players);
+		g.startGame();
+		
+		int[] playPositions = new int[] {
+				0,1,2,3,4,5,6,7,8
+		};
+		List<TTTSquare> plays = g.getOpenPositions();
+		TTTPlayer cp = null;
+		
+		for (int i = 0; i < playPositions.length; i++) {
+			TTTSquare nextPlay = plays.get(playPositions[i]);
+			
+			cp = g.getCurrentPlayer();			
+			nextPlay.setToken(cp.getTokens().get(0));
+			GameStatus status = g.performMove(cp, nextPlay);
+			
+			if (GameStatus.IN_PROGRESS != status) {
+				break;
+			}
+		}
+		
+		assertSame(GameStatus.GAME_OVER, g.getGameStatus());
+		assertSame(cp.getId(), players.get(0).getId());
+	}	
+	
+	@Test
+	public void completeGameNoWinner_draw() {
+		List<TTTPlayer> players = new ArrayList<>();
+		players.add(new TTTPlayer(1, "Player1"));
+		players.add(new TTTPlayer(2, "Player2"));
+		TTTGame g = new TTTGame(players);
+		g.startGame();
+		
+		int[] playPositions = new int[] {
+				0,2,1,3,5,4,6,8,7
+		};
+		List<TTTSquare> plays = g.getOpenPositions();
+		TTTPlayer cp = null;
+		
+		for (int i = 0; i < playPositions.length; i++) {
+			TTTSquare nextPlay = plays.get(playPositions[i]);
+			
+			cp = g.getCurrentPlayer();			
+			nextPlay.setToken(cp.getTokens().get(0));
+			GameStatus status = g.performMove(cp, nextPlay);
+			
+			if (GameStatus.IN_PROGRESS != status) {
+				break;
+			}
+		}
+		
+		assertSame(GameStatus.DRAW, g.getGameStatus());
+		assertSame(cp.getId(), players.get(0).getId());
+	}
 }

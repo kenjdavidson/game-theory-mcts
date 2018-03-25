@@ -92,17 +92,13 @@ public abstract class GameManager<G extends GameManager<G,B,P,T,U>,
 	 * 
 	 * @param game
 	 */
-	public GameManager(GameManager<G,B,P,T,U> game, boolean next) {
+	public GameManager(GameManager<G,B,P,T,U> game) {
 		this(ObjectCopier.copyOf(game.getBoard()), game.getPlayers());
 		this.setStarted(game.isStarted());
 		this.setCancelled(game.isCancelled());
 		this.setPlayerIndex(game.getPlayerIndex());
 		this.setPreviousPlayerIndex(game.getPreviousPlayerIndex());
 		this.setTurn(game.getTurn());
-		
-		if (next) {
-			nextPlayer();
-		}
 	}
 	
 	/**

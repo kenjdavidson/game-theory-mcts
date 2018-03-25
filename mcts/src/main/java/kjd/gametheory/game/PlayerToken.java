@@ -66,6 +66,13 @@ public abstract class PlayerToken<P extends Player<T,P>,
 		this.type = token.getType();
 		this.player = ObjectCopier.copyOf(token.getPlayer());
 	}
+	
+	@Override
+	public String toString() {
+		return new StringBuffer(getName())
+				.append(" [").append(getType()).append("]")
+				.toString();
+	}
 
 	@Override
 	public int hashCode() {

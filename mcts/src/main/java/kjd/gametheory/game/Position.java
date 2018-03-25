@@ -77,8 +77,9 @@ public abstract class Position<T extends PlayerToken<P,T>,
 		return new StringBuffer()
 				.append(this.getClass().getSimpleName())
 				.append(" [").append(this.getX())
-				.append(",").append(this.getY())
-				.append("]").toString();
+				.append(",").append(this.getY()).append("] = ")
+				.append(getToken())
+				.toString();
 				
 	}
 }

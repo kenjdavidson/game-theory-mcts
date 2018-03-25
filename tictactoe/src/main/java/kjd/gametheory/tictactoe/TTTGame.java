@@ -25,28 +25,25 @@ public class TTTGame extends GameManager<TTTGame, TTTBoard, TTTSquare, TTTMark, 
 			{ 0, 3, 6 },		// Column 1
 			{ 1, 4, 7 },		// Column 2
 			{ 2, 5, 8 },		// Column 3
-			{ 1, 4, 8 },		// Diagonal 1
-			{ 6, 5, 2 }		// Diagonal 2
+			{ 0, 4, 8 },		// Diagonal 1
+			{ 2, 4, 6 }		// Diagonal 2
 	};
 	
 	public TTTGame(TTTPlayer... players) {
-		super(new TTTBoard(), Arrays.stream(players).collect(Collectors.toList()));
+		this(new TTTBoard(), 
+				Arrays.stream(players).collect(Collectors.toList()));
 	}
 	
 	public TTTGame(List<TTTPlayer> players) {
 		this(new TTTBoard(), players);
 	}
 	
-	public TTTGame(TTTGame game) {
-		this(game, false);
-	}
-
-	public TTTGame(TTTGame game, boolean next) {
-		super(game, next);
-	}
-
 	public TTTGame(TTTBoard board, List<TTTPlayer> players) {
 		super(board, players);
+	}
+	
+	public TTTGame(TTTGame game) {
+		super(game);
 	}
 
 	@Override
@@ -60,7 +57,7 @@ public class TTTGame extends GameManager<TTTGame, TTTBoard, TTTSquare, TTTMark, 
 		
 		return open.stream()
 				.map(position -> {
-					TTTGame play = new TTTGame(this, true);	// Move to next player	
+					TTTGame play = new TTTGame(this);	
 					position.getToken().setPlayer(play.getCurrentPlayer());
 					play.performMove(position.getToken().getPlayer(), position);
 					return play;
@@ -85,12 +82,11 @@ public class TTTGame extends GameManager<TTTGame, TTTBoard, TTTSquare, TTTMark, 
 			throws IllegalArgumentException, IllegalStateException {
 		TTTSquare found = getBoard().getPosition(position);
 		
-		Validate.validState(isStarted());
-		Validate.validState(!isCancelled());
+		Validate.validState(GameStatus.IN_PROGRESS == determineStatus());
 		Validate.isTrue(player != null && player.getId() == getCurrentPlayer().getId());
-		Validate.isTrue(found.getToken() != null);
+		Validate.isTrue(null != position.getToken());
+		Validate.isTrue(null == found.getToken());
 		found.setToken(position.getToken());
-		found.getToken().setPlayer(player);
 		GameStatus status = determineStatus();
 		
 		if (GameStatus.IN_PROGRESS == status) {
@@ -145,4 +141,28 @@ public class TTTGame extends GameManager<TTTGame, TTTBoard, TTTSquare, TTTMark, 
 			})
 			.findFirst();		
 	}
+
+	/**
+	 * Starts a game.  Checks to see if the Players have tokens setup, if not
+	 * then they are added.  In order for the game to start, there needs to be
+	 * two players.
+	 * 
+	 * @throws IllegalStateException
+	 */
+	@Override
+	public void startGame() throws IllegalStateException {
+		Validate.isTrue(null != getPlayers());
+		Validate.isTrue(2 == getPlayers().size());
+		
+		if (0 == getPlayers().get(0).getTokens().size()) {
+			getPlayers().get(0).getTokens().add(new TTTMark("X"));
+		}
+		
+		if (0 == getPlayers().get(1).getTokens().size()) {
+			getPlayers().get(1).getTokens().add(new TTTMark("O"));
+		}
+		
+		super.startGame();				
+	}
+	
 }

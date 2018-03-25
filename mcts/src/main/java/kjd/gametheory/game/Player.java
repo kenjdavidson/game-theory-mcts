@@ -93,4 +93,12 @@ public abstract class Player<T extends PlayerToken<P,T>,
 	public boolean addToken(T token) {
 		return tokens.add(token);		
 	}
+	
+	@Override
+	public String toString() {
+		return new StringBuffer(getName())
+				.append(" [").append(getId()).append("]: ")
+				.append(getTokens().toString())
+				.toString();
+	}
 }

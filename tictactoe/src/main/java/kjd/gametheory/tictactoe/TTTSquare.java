@@ -22,4 +22,5 @@ public class TTTSquare extends Position<TTTMark, TTTPlayer> {
 		super(position);
 	}
 	
+	
 }

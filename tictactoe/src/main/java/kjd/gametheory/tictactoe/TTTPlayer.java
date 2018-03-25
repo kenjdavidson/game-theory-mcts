@@ -21,5 +21,11 @@ public class TTTPlayer extends Player<TTTMark, TTTPlayer> {
 	public TTTPlayer(Player<TTTMark, TTTPlayer> player) {
 		super(player);
 	}
-	
+
+	@Override
+	public boolean addToken(TTTMark token) {
+		token.setPlayer(this);
+		return super.addToken(token);
+	}
+			
 }
