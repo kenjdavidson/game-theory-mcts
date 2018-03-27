@@ -84,8 +84,8 @@ public class TTTGame extends GameManager<TTTGame, TTTBoard, TTTSquare, TTTMark, 
 		
 		Validate.validState(GameStatus.IN_PROGRESS == determineStatus());
 		Validate.isTrue(player != null && player.getId() == getCurrentPlayer().getId());
-		Validate.isTrue(null != position.getToken());
 		Validate.isTrue(null == found.getToken());
+		Validate.isTrue(null != position.getToken());		
 		found.setToken(position.getToken());
 		GameStatus status = determineStatus();
 		
@@ -160,7 +160,7 @@ public class TTTGame extends GameManager<TTTGame, TTTBoard, TTTSquare, TTTMark, 
 		
 		if (0 == getPlayers().get(1).getTokens().size()) {
 			getPlayers().get(1).getTokens().add(new TTTMark("O"));
-		}
+		}		
 		
 		super.startGame();				
 	}

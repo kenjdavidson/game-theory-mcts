@@ -9,20 +9,19 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>tictactoe</artifactId>
+	<artifactId>tictactoe-desktop</artifactId>
 
-	<name>tictactoe</name>
+	<name>tictactoe-desktop</name>
 	<url>http://maven.apache.org</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.version>0.0.1-SNAPSHOT</project.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>kjd.gametheory</groupId>
-			<artifactId>mcts</artifactId>
+			<artifactId>tictactoe</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

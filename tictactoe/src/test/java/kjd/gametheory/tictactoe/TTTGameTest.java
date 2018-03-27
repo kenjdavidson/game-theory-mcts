@@ -83,6 +83,20 @@ public class TTTGameTest {
 		assertSame(GameStatus.IN_PROGRESS, g.getGameStatus());
 	}
 	
+	@Test(expected=IllegalStateException.class)
+	public void startGameNoPlayers_illegalState() {
+		TTTGame g = createGame(new TTTBoard());
+		g.getPlayers().clear();
+		g.startGame();
+	}
+	
+	@Test(expected=IllegalStateException.class)
+	public void startGameNullPlayers_illegalState() {
+		TTTGame g = createGame(new TTTBoard());
+		g.setPlayers(null);
+		g.startGame();
+	}
+	
 	@Test
 	public void cancelGame_statusReturnsCancelled() {
 		TTTGame g = createGame(new TTTBoard());
@@ -130,7 +144,7 @@ public class TTTGameTest {
 	}
 	
 	@Test(expected=IllegalArgumentException.class) 
-	public void performMoveWrongPlayer_illegalState() {
+	public void performMoveWrongPlayer_illegalArgument() {
 		TTTGame g = createGame(new TTTBoard());
 		g.startGame();		
 		
@@ -139,7 +153,39 @@ public class TTTGameTest {
 		
 		g.performMove(p2, s1);
 	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void performMoveNullPlayer_illegalArgument() {
+		TTTGame g = createGame(new TTTBoard());
+		g.startGame();		
+		
+		TTTSquare s1 = new TTTSquare(1,1);
+		
+		g.performMove(null, s1);	
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void performMoveTakenSquare_illegalArgument() {
+		TTTGame g = createGame(new TTTBoard());
+		g.startGame();		
+		
+		TTTPlayer p1 = g.getPlayers().get(0);
+		TTTPlayer p2 = g.getPlayers().get(1);
+		TTTSquare s1 = new TTTSquare(1,1);		
+		g.performMove(p1, s1);
+		g.performMove(p2, s1);
+	}
 
+	@Test(expected=IllegalArgumentException.class)
+	public void performMoveNullToken_illegalArgument() {
+		TTTGame g = createGame(new TTTBoard());
+		g.startGame();		
+		
+		TTTPlayer p1 = g.getPlayers().get(0);
+		TTTSquare s1 = new TTTSquare(1,1);		
+		g.performMove(p1, s1);
+	}
+	
 	@Test
 	public void completeGameWinner_gameOver() {
 		List<TTTPlayer> players = new ArrayList<>();
