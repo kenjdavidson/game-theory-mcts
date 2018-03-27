@@ -81,10 +81,18 @@ public class TicTacToe extends Application {
 	protected void initializeMainMenu(BorderPane layout) {
 		mainMenu = new MainMenu();
 		
+		mainMenu.setSingleOnAction(e -> startGame(true));
+		
+		mainMenu.setDoubleOnAction(e -> startGame(false));
+		
 		mainMenu.setOnlineOnAction(e -> {
 			Platform.runLater(() -> {
 				status.setText(resources.getString("OnlineNotImplemented"));
 			});
 		});
+	}
+	
+	public void startGame(boolean singlePlayer) {
+		
 	}
 }
