@@ -8,7 +8,7 @@ import java.util.Random;
 
 import kjd.gametheory.game.GameBoard;
 import kjd.gametheory.game.GameManager;
-import kjd.gametheory.game.Position;
+import kjd.gametheory.game.BoardPosition;
 import kjd.gametheory.util.ObjectCopier;
 import lombok.Getter;
 import lombok.Setter;

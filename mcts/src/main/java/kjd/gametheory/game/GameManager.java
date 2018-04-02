@@ -22,9 +22,9 @@ import lombok.Setter;
  */
 public abstract class GameManager<G extends GameManager<G,B,P,T,U>,
 							B extends GameBoard<P,T,U>,
-							P extends Position<T,U>,
+							P extends BoardPosition<T,U>,
 							T extends PlayerToken<U,T>,
-							U extends Player<T,U>> {
+							U extends GamePlayer<T,U>> {
 	
 	/**
 	 * @param the Board being played upon
@@ -161,6 +161,10 @@ public abstract class GameManager<G extends GameManager<G,B,P,T,U>,
 			return null;
 		
 		return players.get(getPreviousPlayerIndex());
+	}
+	
+	public List<P> getPositions() {
+		return getBoard().getPositions();
 	}
 	
 	/**

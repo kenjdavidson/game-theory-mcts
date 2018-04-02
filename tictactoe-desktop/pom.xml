@@ -24,5 +24,10 @@
 			<artifactId>tictactoe</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>kjd.gametheory</groupId>
+			<artifactId>mcts</artifactId>
+			<version>${project.version}</version>
+		</dependency>		
 	</dependencies>
 </project>

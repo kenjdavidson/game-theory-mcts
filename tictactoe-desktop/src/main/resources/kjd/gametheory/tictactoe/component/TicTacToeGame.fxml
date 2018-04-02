@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import kjd.gametheory.tictactoe.control.TicTacToeBoard?>
+
+<fx:root xmlns:fx="http://javafx.com/fxml/1" type="javafx.scene.layout.BorderPane">
+	<top>
+		<HBox>
+			<padding><Insets left="16.0" top="8.0" right="16.0" bottom="8.0"/></padding>			
+			<children>
+				<ComboBox fx:id="cmbPlayer1" />
+				<ComboBox fx:id="cmbPlayer2" />
+			</children>
+		</HBox>
+	</top>
+	<center>
+		<TicTacToeBoard fx:id="board"></TicTacToeBoard>
+	</center>
+	<bottom>
+		<HBox>
+			<padding><Insets left="16.0" top="8.0" right="16.0" bottom="8.0"/></padding>			
+			<children>
+				<Label fx:id="lblStatus"/>
+			</children>
+		</HBox>			
+	</bottom>
+</fx:root>
+

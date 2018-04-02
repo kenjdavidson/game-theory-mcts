@@ -6,8 +6,8 @@ import org.apache.commons.lang3.Validate;
 
 import kjd.gametheory.game.GameManager;
 import kjd.gametheory.game.GameStatus;
-import kjd.gametheory.game.Player;
-import kjd.gametheory.game.Position;
+import kjd.gametheory.game.GamePlayer;
+import kjd.gametheory.game.BoardPosition;
 import kjd.gametheory.util.ObjectCopier;
 import lombok.Getter;
 
@@ -52,7 +52,7 @@ public class MonteCarloSearch<G extends GameManager> {
 	/**
 	 * Stores the current Player requesting the next move. 
 	 */
-	private Player currentPlayer;
+	private GamePlayer currentPlayer;
 	
 	/**
 	 * Creates a default MonteCarloSearch.
@@ -156,7 +156,7 @@ public class MonteCarloSearch<G extends GameManager> {
 	 */
 	@SuppressWarnings("unchecked")
 	private void simulateRandomPlay(G game) {
-		List<Position> open = game.getOpenPositions();
+		List<BoardPosition> open = game.getOpenPositions();
 		int next = (int) (Math.random() * (open.size()-1)) + 1;
 		game.performMove(game.getCurrentPlayer(), open.get(next));
 	}

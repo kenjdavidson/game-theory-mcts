@@ -19,9 +19,9 @@ import lombok.Getter;
  * @param <T> Token type assignable to the Position
  * @param <S> Player type assignable to the Token and Position
  */
-public abstract class GameBoard<P extends Position<T,S>,
+public abstract class GameBoard<P extends BoardPosition<T,S>,
 							T extends PlayerToken<S,T>,
-							S extends Player<T,S>> {
+							S extends GamePlayer<T,S>> {
 	
 	/**
 	 * @return the list of positions on the Board

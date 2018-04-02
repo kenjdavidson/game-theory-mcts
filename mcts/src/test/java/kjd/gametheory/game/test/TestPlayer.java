@@ -1,8 +1,8 @@
 package kjd.gametheory.game.test;
 
-import kjd.gametheory.game.Player;
+import kjd.gametheory.game.GamePlayer;
 
-public class TestPlayer extends Player<TestToken, TestPlayer> {
+public class TestPlayer extends GamePlayer<TestToken, TestPlayer> {
 
 	public TestPlayer(int id, String name) {
 		super(id, name);

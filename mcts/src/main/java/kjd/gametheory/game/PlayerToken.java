@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * {@link PlayerToken}s are owned by {@link Player}s and can be placed upon a {@link GameBoard}
+ * {@link PlayerToken}s are owned by {@link GamePlayer}s and can be placed upon a {@link GameBoard}
  * by setting it to a position.  The {@link PlayerToken} provides some standard fields
  * that may be applied to all types of {@link GameManager} Objects.
  * <p>
@@ -13,7 +13,7 @@ import lombok.Setter;
  * @author kendavidson
  *
  */
-public abstract class PlayerToken<P extends Player<T,P>,
+public abstract class PlayerToken<P extends GamePlayer<T,P>,
 					T extends PlayerToken<P,T>> {
 
 	/**

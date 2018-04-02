@@ -10,7 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import kjd.gametheory.tictactoe.component.MainMenu;
+import kjd.gametheory.tictactoe.component.TicTacToeGame;
 
 /**
  * Play Tic Tac Toe
@@ -36,14 +36,15 @@ public class TicTacToe extends Application {
 	private Label status;
 	
 	/**
+	 * Game screen
+	 */
+	private TicTacToeGame gameScreen;
+	
+	/**
 	 * Resource bundle
 	 */
 	private ResourceBundle resources;
 	
-	/**
-	 * Main menu
-	 */
-	private MainMenu mainMenu;
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -57,12 +58,11 @@ public class TicTacToe extends Application {
 	protected void initializeStage(Stage stage) {
 		layout = new BorderPane();
 		stage.setScene(new Scene(layout, 600, 400));		
+		stage.setOnCloseRequest(i -> Platform.exit());
 		
 		initializeMenubar(layout);	
 		initializeStatus(layout);
-		initializeMainMenu(layout);
-		
-		layout.setLeft(mainMenu);
+		initializeGameScreen(layout);
 	}
 	
 	protected void initializeMenubar(BorderPane layout) {
@@ -77,22 +77,10 @@ public class TicTacToe extends Application {
 		
 		layout.setBottom(status);
 	}
-	
-	protected void initializeMainMenu(BorderPane layout) {
-		mainMenu = new MainMenu();
+
+	protected void initializeGameScreen(BorderPane layout) {
+		gameScreen = new TicTacToeGame();
 		
-		mainMenu.setSingleOnAction(e -> startGame(true));
-		
-		mainMenu.setDoubleOnAction(e -> startGame(false));
-		
-		mainMenu.setOnlineOnAction(e -> {
-			Platform.runLater(() -> {
-				status.setText(resources.getString("OnlineNotImplemented"));
-			});
-		});
-	}
-	
-	public void startGame(boolean singlePlayer) {
-		
+		layout.setCenter(gameScreen);
 	}
 }
