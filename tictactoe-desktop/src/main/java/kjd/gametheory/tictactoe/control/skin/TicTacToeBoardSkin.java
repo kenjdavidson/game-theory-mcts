@@ -2,6 +2,8 @@ package kjd.gametheory.tictactoe.control.skin;
 
 import java.util.stream.IntStream;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -9,6 +11,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.SkinBase;
 import javafx.scene.shape.Line;
 import kjd.gametheory.tictactoe.Board;
@@ -30,15 +33,14 @@ public class TicTacToeBoardSkin extends SkinBase<TicTacToeBoard> {
 
 	private Line[] rowDividers;
 	private Line[] colDividers;
-	private Canvas[] squares;
+	private SquareCanvas[] squares;
 	
 	/**
 	 * Listener handling when the Squares list is replaced completely.  This should mean
 	 * that the Board needs a complete redrawing due to restart or a replay. 
 	 */
 	private ChangeListener<ObservableList<BoardSquare>> boardListener = (obs,o,n) -> {
-		initializeLines(getSkinnable());
-		initializeSquares(getSkinnable());
+		initialize(getSkinnable());
 	};
 	
 	/**
@@ -47,13 +49,21 @@ public class TicTacToeBoardSkin extends SkinBase<TicTacToeBoard> {
 	 */
 	private ListChangeListener<BoardSquare> squareListener = (c) -> {
 		System.out.print(c.toString());
+		
+		c.next();
+		if (c.wasReplaced() && c.getAddedSize() == 1) {
+			c.getList().stream()
+				.forEach(square -> {
+					int i = Board.getPositionIndex(square.getX(), square.getY());
+					drawToken(i, squares[i]);
+				});	
+		}
 	};
 	
 	public TicTacToeBoardSkin(TicTacToeBoard control) {
-		super(control);
+		super(control);		
 		initialize(control);
-		initializeLines(control);
-		initializeSquares(control);
+		initializeListeners(control);
 	}
 	
 	/**
@@ -76,9 +86,21 @@ public class TicTacToeBoardSkin extends SkinBase<TicTacToeBoard> {
 			board.setMinSize(MINIMUM_SIZE, MINIMUM_SIZE);
 		}
 		
+		getChildren().clear();
+		initializeLines(board);
+		initializeSquares(board);
+	}
+	
+	/**
+	 * Initializes the board listeners.  The listeners handle new games and new
+	 * boards being created.
+	 * 
+	 * @param board
+	 */
+	protected void initializeListeners(TicTacToeBoard board) {
 		board.squaresProperty().addListener(boardListener);
 		board.squaresProperty().addListener(squareListener);
-	}
+	}	
 	
 	/**
 	 * Initializes the board by setting values for row/column line
@@ -112,10 +134,10 @@ public class TicTacToeBoardSkin extends SkinBase<TicTacToeBoard> {
 	 */
 	private void initializeSquares(TicTacToeBoard board) {
 		
-		squares = new Canvas[9];
+		squares = new SquareCanvas[9];
 		IntStream.range(0, 9)
 			.forEach(i -> {
-				squares[i] = new Canvas(board.getPrefWidth() * 0.333, board.getPrefHeight() * 0.333);	
+				squares[i] = new SquareCanvas(board.getPrefWidth() * 0.333, board.getPrefHeight() * 0.333);		
 				squares[i].setOnMouseClicked(e -> {
 					if (board.getSquares().get(i) != null
 							&& board.getSquares().get(i).getToken() == null
@@ -123,6 +145,10 @@ public class TicTacToeBoardSkin extends SkinBase<TicTacToeBoard> {
 						board.getSquareClicked().call(i);
 					}
 				});
+				
+				// Draw any initial tokens if we are building the Board for an 
+				// in progress game.
+				drawToken(i, squares[i]);
 			});
 		
 		getChildren().addAll(squares);
@@ -145,7 +171,7 @@ public class TicTacToeBoardSkin extends SkinBase<TicTacToeBoard> {
 				double y = Board.getYPosition(i);
 				double startX = (centerX - half) + (((y-1) * 0.333) * box);
 				double startY = (centerY - half) + (((x-1) * 0.333) * box);
-								
+				
 				squares[i].resizeRelocate(startX, startY, 
 						box * 0.333, box * 0.333);								
 			});			
@@ -175,4 +201,75 @@ public class TicTacToeBoardSkin extends SkinBase<TicTacToeBoard> {
 			});					
 	}	
 	
+	/**
+	 * Draws the appropriate token onto the square.
+	 * 
+	 * @param idx
+	 * @param square
+	 */
+	private final void drawToken(int idx, Canvas square) {
+		BoardSquare bs = getSkinnable().getSquares().get(idx);
+		
+		if (bs != null 
+				&& bs.getToken() != null
+				&& !bs.getToken().getName().isEmpty()) {
+			GraphicsContext gc = square.getGraphicsContext2D();
+			gc.setFill(getSkinnable().lineColorProperty().get());
+			gc.fillRect(0, 0, square.getWidth(), square.getHeight());
+		}
+	}
+	
+	/**
+	 * Creates a resizable {@link Canvas}.
+	 * 
+	 * @author kendavidson
+	 *
+	 */
+	private class SquareCanvas extends Canvas {
+		
+		private StringProperty token
+				= new SimpleStringProperty(this, "token");
+		
+		public SquareCanvas(double w, double h) {
+			super(w, h);
+			
+			tokenProperty().addListener(evt -> draw());
+		}
+		
+		private void draw() {
+			double w = getWidth();
+			double h = getHeight();
+			
+			GraphicsContext gc = getGraphicsContext2D();
+			gc.clearRect(0, 0, w, h);			
+		}
+		
+		@Override
+	    public boolean isResizable() {
+	      return true;
+	    }
+	 
+	    @Override
+	    public double prefWidth(double height) {
+	      return getWidth();
+	    }
+	 
+	    @Override
+	    public double prefHeight(double width) {
+	      return getHeight();
+	    }
+
+		public final StringProperty tokenProperty() {
+			return this.token;
+		}
+		
+		public final String getToken() {
+			return this.tokenProperty().get();
+		}
+		
+		public final void setToken(final String token) {
+			this.tokenProperty().set(token);
+		}
+			 	   
+	}
 }

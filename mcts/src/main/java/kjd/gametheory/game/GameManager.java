@@ -31,6 +31,7 @@ public abstract class GameManager<G extends GameManager<G,B,P,T,U>,
 	 * @return the Board being played upon
 	 */
 	@Getter(value=AccessLevel.PROTECTED)
+	@Setter(value=AccessLevel.PROTECTED)
 	private B board;
 	
 	/**

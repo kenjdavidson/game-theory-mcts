@@ -55,9 +55,10 @@ public class Board extends GameBoard<BoardSquare, PlayerMark, Player> {
 		
 		// X = ceil(i / 3) (1, 1, 1, ...)
 		// Y = i mod 3 (1, 2, 3, ...)
-		IntStream.range(0,SQUARES)
+		List<BoardSquare> positions = IntStream.range(0,SQUARES)
 			.mapToObj(i -> new BoardSquare(getXPosition(i), getYPosition(i)))
-			.forEach(p -> getPositions().add(p));
+			.collect(Collectors.toList());
+		setPositions(positions);
 	}
 	
 	/**

@@ -5,7 +5,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import kjd.gametheory.util.ObjectCopier;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
+import net.bytebuddy.implementation.MethodAccessorFactory.AccessType;
 
 /**
  * Abstract {@link GameBoard} provides physical characteristics about a particular
@@ -27,6 +30,7 @@ public abstract class GameBoard<P extends BoardPosition<T,S>,
 	 * @return the list of positions on the Board
 	 */
 	@Getter
+	@Setter(value=AccessLevel.PROTECTED)
 	private List<P> positions;
 	
 	/**
